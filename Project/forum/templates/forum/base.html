@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{title}}</title>
+		<link type="text/css" href="{% static 'forum/css/styles.css' %}" rel="stylesheet" />
+		<meta charset=utf-8">
+	</head>
+	<body>
+		<div id="page-wraper">
+		<header>
+			{% block main-menu %}
+				<nav class="nav-main">
+					{% for m in menu %}
+					{% if m.url_name == menu_item_selected %}
+					<a href="{% url m.url_name %}">
+					<div class="main-menu-item main-menu-item-selected"><p>{{m.title}}</p></div>
+					</a>
+					{% else %}
+					<a href="{% url m.url_name %}">
+					<div class="main-menu-item"><p>{{m.title}}</p></div>
+					</a>
+					{% endif %}
+					{% endfor %}
+				</nav>
+			{% endblock main-menu %}
+		</header>
+		<div class="flex-container">
+		<!--content block -->
+		<section class="content">
+			{% block content %}
+			{% endblock content %}
+			{% if page_obj.has_other_pages %}
+			<nav class="centered paginator">
+				{% if page_obj.has_previous %}
+					<a href="?page={{ page_obj.previous_page_number }}">
+						<div class="page-pointer page-num" ><p>&lt</p></div>
+					</a>
+				{% else %}
+					<div class="page-pointer page-num page-num-hidden"></div>
+				{% endif %}
+				<div class="page-nums">
+				{% for p in paginator.page_range %}
+					{% if page_obj.number == p %}
+						<div class="page-pointer page-num page-num-selected">
+							<p>{{ p }}</p>
+						</div>
+					{% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+						<a href="?page={{ p }}">
+							<div class="page-pointer page-num">
+								<p>{{ p }}</p>
+							</div>
+						</a>
+					{% endif %}
+				{% endfor %}
+				</div>
+				{% if page_obj.has_next %}
+					<a href="?page={{ page_obj.next_page_number }}">
+						<div class="page-pointer page-num"  ><p>&gt</p></div>
+					</a>
+				{% else %}
+					<div class="page-pointer page-num page-num-hidden"></div>
+				{% endif %}
+			</nav>
+			{% endif %}
+		</section>
+		<!-- end of content block-->
+		<!-- right sidebar -->
+		<aside id="right-sidebar">
+			<ul class="theme-list">
+				{% if theme_selected == 0 %}
+				<li class="theme-item first-theme-item theme-item-selected">
+					<div>
+						<p>Все темы</p>
+					</div>
+				</li>
+				{% else %}
+				<li class="theme-item">
+					<a href="{% url 'main' %}">
+						<div>
+							<p>Все темы</p>
+						</div>
+					</a>
+				</li>
+			{% endif %}
+				{% for theme in themes %}
+					{% if theme.slug == theme_selected %}
+						<li class="theme-item theme-item-selected">
+							<div>
+								<p>{{theme.name}}</p>
+							</div>
+						</li>
+					{% else %}
+						<li class="theme-item">
+							<a href="{{ theme.get_absolute_url }}">
+								<div>
+									<p>{{theme.name}}</p>
+								</div>
+							</a>
+							{% if user.is_staff %}
+								<a href="{% url 'delete_theme' theme.slug %}">
+									<div class="delete-theme-button">
+										<p>X</p>
+									</div>
+								</a>
+							{% endif %}
+							</li>
+					{% endif %}
+				{% endfor %}
+				{% if user.is_staff %}
+					<li class="post-button add-theme-button">
+						<a href="{% url 'add_theme' %}">
+								<div>
+									<p>Добавить тему</p>
+								</div>
+						</a>
+					</li>
+				{% endif %}
+			</ul>
+		</aside>
+
+		<!-- end of right sidebar -->
+		</div>
+		<footer>
+			<div id="footer-inner">
+				<small>&copy; leinadalien company</small>
+			</div>
+		</footer>
+
+		</div>
+	<!-- Конец footer'а и страницы -->
+	</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends 'forum/base.html' %}
+
+{% block content %}
+<ul class="centered post-container">
+    {% if posts %}
+    {% for post in posts %}
+    <li class="post-item">
+        <div class="post-title"><h3>{{post.title}}</h3></div>
+
+        <div class="post-text-owner">
+        <p>{{ post.content|linebreaks|truncatewords:10 }}</p>
+        </div>
+        <div class="post-bottom-data">
+            <div class="post-meta-data">
+             <p>Тема: {{ post.theme }}</p>
+              <p>Автор: {{ post.author }}</p>
+             <p>Дата: {{ post.time_create|date:"d-m-y H:i:s" }}</p>
+
+            </div>
+            <a href="{{ post.get_absolute_url }}"><div class="post-button open-post-button" ><p>Посмотреть</p></div></a>
+        </div>
+
+    </li>
+    {% endfor %}
+    {% else %}
+    <div class="answers-title"><p>Здесь пока ничего нет</p></div>
+    {% endif %}
+</ul>
+{% endblock content %}
